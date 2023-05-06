@@ -3,6 +3,7 @@ import BreadCrumbs from '../../components/BreadCrumbs';
 import MainLayout from '../../components/MainLayout';
 import { images } from '../../contants';
 import SuggestedPost from './container/SuggestedPost';
+import CommentsContainer from '../../components/comments/CommentsContainer';
 
 const breadCrumbsData = [
 	{
@@ -84,6 +85,7 @@ const ArticleDetail = () => {
 							voluptatum?
 						</p>
 					</div>
+					<CommentsContainer className="mt-10" />
 				</article>
 				<SuggestedPost
 					header="Latest articles"
