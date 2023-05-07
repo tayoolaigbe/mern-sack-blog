@@ -4,9 +4,10 @@ import { getCommentsData } from '../../data/comments';
 import { useEffect, useState } from 'react';
 import Comment from './Comment';
 
-const CommentsContainer = ({ className }) => {
+const CommentsContainer = ({ className, loggedInUserId }) => {
 	const [comments, setComments] = useState([]);
 	const mainComments = comments.filter(comment => comment.parent === null);
+	const [affectedComment, setAffectedComment] = useState(null);
 
 	useEffect(() => {
 		(async () => {
@@ -39,7 +40,14 @@ const CommentsContainer = ({ className }) => {
 			/>
 			<div className="space-y-4 mt-8">
 				{mainComments.map((comment, index) => (
-					<Comment key={index} comment={comment} />
+					<Comment
+						key={comment._id}
+						comment={comment}
+						loggedInUserId={loggedInUserId}
+						affectedComment={affectedComment}
+						setAffectedComment={setAffectedComment}
+						addComment={addCommentHandler}
+					/>
 				))}
 			</div>
 		</div>

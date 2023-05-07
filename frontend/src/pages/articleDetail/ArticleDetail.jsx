@@ -85,7 +85,7 @@ const ArticleDetail = () => {
 							voluptatum?
 						</p>
 					</div>
-					<CommentsContainer className="mt-10" />
+					<CommentsContainer className="mt-10" loggedInUserId="a" />
 				</article>
 				<SuggestedPost
 					header="Latest articles"
