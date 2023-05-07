@@ -31,7 +31,20 @@ const CommentsContainer = ({ className, loggedInUserId }) => {
 		};
 
 		setComments(prevState => [newComment, ...prevState]);
+		setAffectedComment(null);
 	};
+
+	const updateCommentHandler = (value, commentId) => {
+		const updatedComments = comments.map(comment => {
+			if (comment._id === commentId) {
+				return { ...comment, desc: value };
+			}
+			return comment;
+		});
+		setComments(updatedComments);
+		setAffectedComment(null);
+	};
+
 	return (
 		<div className={`${className}`}>
 			<CommentForm
@@ -47,6 +60,7 @@ const CommentsContainer = ({ className, loggedInUserId }) => {
 						affectedComment={affectedComment}
 						setAffectedComment={setAffectedComment}
 						addComment={addCommentHandler}
+						updateComment={updateCommentHandler}
 					/>
 				))}
 			</div>
