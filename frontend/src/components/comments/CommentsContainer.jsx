@@ -44,6 +44,12 @@ const CommentsContainer = ({ className, loggedInUserId }) => {
 		setComments(updatedComments);
 		setAffectedComment(null);
 	};
+	const deleteCommentHandler = commentId => {
+		const updatedComments = comments.filter(
+			comment => comment._id !== commentId
+		);
+		setComments(updatedComments);
+	};
 
 	return (
 		<div className={`${className}`}>
@@ -61,6 +67,7 @@ const CommentsContainer = ({ className, loggedInUserId }) => {
 						setAffectedComment={setAffectedComment}
 						addComment={addCommentHandler}
 						updateComment={updateCommentHandler}
+						deleteComment={deleteCommentHandler}
 					/>
 				))}
 			</div>
