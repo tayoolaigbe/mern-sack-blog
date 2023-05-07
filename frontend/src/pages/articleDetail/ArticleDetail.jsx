@@ -4,6 +4,7 @@ import MainLayout from '../../components/MainLayout';
 import { images } from '../../contants';
 import SuggestedPost from './container/SuggestedPost';
 import CommentsContainer from '../../components/comments/CommentsContainer';
+import SocialShareButtons from '../../components/SocialShareButtons';
 
 const breadCrumbsData = [
 	{
@@ -87,12 +88,27 @@ const ArticleDetail = () => {
 					</div>
 					<CommentsContainer className="mt-10" loggedInUserId="a" />
 				</article>
-				<SuggestedPost
-					header="Latest articles"
-					posts={postsdata}
-					tags={tagsData}
-					className="mt-8 lg:mt-0 lg:max-w-xs"
-				/>
+				<div>
+					<SuggestedPost
+						header="Latest articles"
+						posts={postsdata}
+						tags={tagsData}
+						className="mt-8 lg:mt-0 lg:max-w-xs"
+					/>
+					<div className="mt-7">
+						<h2 className="font-roboto font-medium text-dark-hard mb-4 md:text-xl">
+							Share on:
+						</h2>
+						<SocialShareButtons
+							url={encodeURI(
+								'https://moonfo.com/post/client-side-and-server-side-explanation'
+							)}
+							title={encodeURIComponent(
+								'Client-side and Server-side explanation'
+							)}
+						/>
+					</div>
+				</div>
 			</section>
 		</MainLayout>
 	);
