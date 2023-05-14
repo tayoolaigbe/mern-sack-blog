@@ -130,13 +130,14 @@ export const updateProfilePicture = async (req, res, next) => {
 				next(error);
 			} else {
 				if (req.file) {
-					const updatedUser = await User.findByIdAndUpdate(
-						req.user._id,
-						{
-							avatar: req.file.filename,
-						},
-						{ new: true }
-					);
+					let filename;
+					const updatedUser = await User.findById(req.user._id);
+					filename = updatedUser.avatar;
+					if (filename) {
+						fileRemover(filename);
+					}
+					updatedUser.avatar = req.file.filename;
+					await updatedUser.save();
 
 					return res.status(201).json({
 						_id: updatedUser._id,
