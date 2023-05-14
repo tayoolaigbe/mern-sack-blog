@@ -10,7 +10,6 @@ export const registerUser = async (req, res, next) => {
 		});
 
 		if (user) {
-			// return res.status(400).json({ message: 'User email already registered' });
 			throw new Error('User email already registered');
 		}
 
@@ -22,7 +21,7 @@ export const registerUser = async (req, res, next) => {
 		});
 
 		return res.status(201).json({
-			_id: user.id._id,
+			_id: user._id,
 			avatar: user.avatar,
 			name: user.name,
 			email: user.email,
@@ -31,9 +30,35 @@ export const registerUser = async (req, res, next) => {
 			token: await user.generateJWT(),
 		});
 	} catch (error) {
-		// return res.status(500).json({ message: 'Something went wrong!' });
 		next(error);
 	}
 };
 
-export { registerUser };
+export const loginUser = async (req, res, next) => {
+	try {
+		const { email, password } = req.body;
+		let user = await User.findOne({
+			email,
+		});
+
+		if (!user) {
+			throw new Error('User not found!');
+		}
+
+		if (await user.comparePassword(password)) {
+			return res.status(200).json({
+				_id: user._id,
+				avatar: user.avatar,
+				name: user.name,
+				email: user.email,
+				verified: user.verified,
+				admin: user.admin,
+				token: await user.generateJWT(),
+			});
+		} else {
+			throw new Error('Invalid Email or Passwrod!');
+		}
+	} catch (error) {
+		next(error);
+	}
+};

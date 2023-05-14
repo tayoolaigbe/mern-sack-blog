@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { hash } from 'bcryptjs';
+import { hash, compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 
 const UserSchema = new Schema(
@@ -45,9 +45,13 @@ UserSchema.pre('save', async function (next) {
 });
 
 UserSchema.methods.generateJWT = async () => {
-	return await sign({ id: this._id }, process.env.JWT_SECRET, {
+	return sign({ id: this._id }, process.env.JWT_SECRET, {
 		expiresIn: '30d',
 	});
+};
+
+UserSchema.methods.comparePassword = async function (enteredPassword) {
+	return await compare(enteredPassword, this.password);
 };
 
 const User = model('User', UserSchema);
