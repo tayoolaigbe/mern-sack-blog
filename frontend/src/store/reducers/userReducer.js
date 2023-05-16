@@ -7,10 +7,13 @@ const userSlice = createSlice({
 		setUserInfo(state, action) {
 			state.userInfo = action.payload;
 		},
+		resetUserInfo(state, action) {
+			state.userInfo = null;
+		},
 	},
 });
 
-const userAction = userSlice.actions;
+const userActions = userSlice.actions;
 const userReducer = userSlice.reducer;
 
-export { userAction, userReducer };
+export { userActions, userReducer };

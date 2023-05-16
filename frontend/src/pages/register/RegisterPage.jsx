@@ -6,7 +6,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import { signUp } from '../../services/index/users';
-import { userAction } from '../../store/reducers/userReducer';
+import { userActions } from '../../store/reducers/userReducer';
 
 const RegisterPage = () => {
 	const navigate = useNavigate();
@@ -17,7 +17,7 @@ const RegisterPage = () => {
 			return signUp({ name, email, password });
 		},
 		onSuccess: data => {
-			dispatch(userAction.setUserInfo(data));
+			dispatch(userActions.setUserInfo(data));
 			localStorage.setItem('account', JSON.stringify(data));
 		},
 		onError: error => {
