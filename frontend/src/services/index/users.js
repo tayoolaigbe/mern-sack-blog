@@ -1,8 +1,9 @@
 import axios from 'axios';
 
+const domain = 'http://localhost:5000';
 export const signUp = async ({ name, email, password }) => {
 	try {
-		const { data } = await axios.post('/api/users/register', {
+		const { data } = await axios.post(`${domain}/api/users/register`, {
 			name,
 			email,
 			password,
