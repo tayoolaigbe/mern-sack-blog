@@ -2,15 +2,18 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import MainLayout from '../../components/MainLayout';
-import { getUserProfile } from '../../services/index/users';
+import { getUserProfile, updateProfile } from '../../services/index/users';
 import ProfilePicture from '../../components/ProfilePicture';
+import { userActions } from '../../store/reducers/userReducer';
+import { toast } from 'react-hot-toast';
 
 const ProfilePage = () => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 	const userState = useSelector(state => state.user);
 
 	const {
@@ -22,6 +25,25 @@ const ProfilePage = () => {
 			return getUserProfile({ token: userState.userInfo.token });
 		},
 		queryKey: ['profile'],
+	});
+
+	const { mutate, isLoading } = useMutation({
+		mutationFn: ({ name, email, password }) => {
+			return updateProfile({
+				token: userState.userInfo.token,
+				userData: { name, email, password },
+			});
+		},
+		onSuccess: data => {
+			dispatch(userActions.setUserInfo(data));
+			localStorage.setItem('account', JSON.stringify(data));
+			queryClient.invalidateQueries(['profile']);
+			toast.success('Profile updated');
+		},
+		onError: error => {
+			toast.error(error.message);
+			console.log(error);
+		},
 	});
 
 	useEffect(() => {
@@ -45,7 +67,10 @@ const ProfilePage = () => {
 		},
 		mode: 'onChange',
 	});
-	const submitHandler = data => {};
+	const submitHandler = data => {
+		const { name, email, password } = data;
+		mutate({ name, email, password });
+	};
 
 	return (
 		<MainLayout>
@@ -121,22 +146,13 @@ const ProfilePage = () => {
 								htmlFor="password"
 								className="text-[#5a7184] font-semibold block"
 							>
-								Password
+								New Password (optional)
 							</label>
 							<input
 								type="password"
 								id="password"
-								{...register('password', {
-									required: {
-										value: true,
-										message: 'Password is required',
-									},
-									minLength: {
-										value: 6,
-										message: 'Password muxt be at least 6 characters.',
-									},
-								})}
-								placeholder="Enter password"
+								{...register('password')}
+								placeholder="Enter new password"
 								className={`placeholder:text-[#959ead] text-dark-hard mt-3 rounded-lg px-5 py-4 font-semibold block outline-none border ${
 									errors.password ? 'border-red-500' : 'border-[#c3cad9]'
 								}`}
@@ -147,45 +163,12 @@ const ProfilePage = () => {
 								</p>
 							)}
 						</div>
-						<div className="flex flex-col mb-6 w-full">
-							<label
-								htmlFor="confirmPassword"
-								className="text-[#5a7184] font-semibold block"
-							>
-								Confirm Password
-							</label>
-							<input
-								type="password"
-								id="confirmPassword"
-								{...register('confirmPassword', {
-									required: {
-										value: true,
-										message: 'Confirm password is required',
-									},
-									validate: value => {
-										if (value !== password) {
-											return 'Passwords dont match';
-										}
-									},
-								})}
-								placeholder="Repeat password"
-								className={`placeholder:text-[#959ead] text-dark-hard mt-3 rounded-lg px-5 py-4 font-semibold block outline-none border ${
-									errors.confirmPassword ? 'border-red-500' : 'border-[#c3cad9]'
-								}`}
-							/>
-							{errors.confirmPassword?.message && (
-								<p className="text-red-500 text-xs mt-1">
-									{errors.confirmPassword?.message}
-								</p>
-							)}
-						</div>
-
 						<button
 							type="submit"
 							disabled={!isValid || profileIsLoading}
 							className="bg-primary text-white font-bold text-lg py-4 px-8 w-full rounded-lg mb-6 disabled:opacity-70 disabled:cursor-not-allowed"
 						>
-							Register
+							Update profile
 						</button>
 					</form>
 				</div>

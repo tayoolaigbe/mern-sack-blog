@@ -139,7 +139,7 @@ const RegisterPage = () => {
 									},
 									minLength: {
 										value: 6,
-										message: 'Password muxt be at least 6 characters.',
+										message: 'Password must be at least 6 characters.',
 									},
 								})}
 								placeholder="Enter password"
