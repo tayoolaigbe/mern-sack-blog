@@ -1,4 +1,5 @@
 import express from 'express';
+import path from 'path';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/db';
@@ -22,6 +23,10 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/users', userRoutes);
+
+// static assets
+
+app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 app.use(invalidPathHandler);
 app.use(errorResponserHandler);
