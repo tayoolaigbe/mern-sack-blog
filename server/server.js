@@ -10,6 +10,7 @@ import {
 
 // routes
 import userRoutes from './routes/userRoutes';
+import postRoutes from './routes/postRoutes';
 
 dotenv.config();
 connectDB();
@@ -23,6 +24,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/users', userRoutes);
+app.use('/api/posts', postRoutes);
 
 // static assets
 
