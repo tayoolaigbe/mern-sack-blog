@@ -89,7 +89,7 @@ const ArticleDetail = () => {
 				)
 			);
 		},
-		queryKey: ['posts'],
+		queryKey: ['blog', slug],
 		onError: error => {
 			toast.error(error.message);
 			console.log(error);
