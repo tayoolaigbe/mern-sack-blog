@@ -1,25 +1,22 @@
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import BreadCrumbs from '../../components/BreadCrumbs';
 import MainLayout from '../../components/MainLayout';
-import { images } from '../../contants';
+import { images, stables } from '../../contants';
 import SuggestedPost from './container/SuggestedPost';
 import CommentsContainer from '../../components/comments/CommentsContainer';
 import SocialShareButtons from '../../components/SocialShareButtons';
+import { useQuery } from '@tanstack/react-query';
+import { getSinglePost } from '../../services/index/post';
+import { toast } from 'react-hot-toast';
+import { useState } from 'react';
+import parse from 'html-react-parser';
 
-const breadCrumbsData = [
-	{
-		name: 'Home',
-		link: '/',
-	},
-	{
-		name: 'Blog',
-		link: '/blog',
-	},
-	{
-		name: 'Article title',
-		link: '/blog/123',
-	},
-];
+import { generateHTML } from '@tiptap/html';
+import Bold from '@tiptap/extension-bold';
+import Italic from '@tiptap/extension-italic';
+import Document from '@tiptap/extension-document';
+import Paragraph from '@tiptap/extension-paragraph';
+import Text from '@tiptap/extension-text';
 
 const postsdata = [
 	{
@@ -59,6 +56,45 @@ const tagsData = [
 ];
 
 const ArticleDetail = () => {
+	const { slug } = useParams();
+	const [breadCrumbsData, setBreadCrumbsData] = useState([]);
+	const [body, setBody] = useState(null);
+	const { data, isLoading, isError } = useQuery({
+		queryFn: () => getSinglePost({ slug }),
+		onSuccess: data => {
+			console.log(data);
+			setBreadCrumbsData([
+				{
+					name: 'Home',
+					link: '/',
+				},
+				{
+					name: 'Blog',
+					link: '/blog',
+				},
+				{
+					name: 'Article title',
+					link: `/blog/${data?.slug}`,
+				},
+			]);
+			setBody(
+				parse(
+					generateHTML(data?.body?.content, [
+						Bold,
+						Italic,
+						Text,
+						Paragraph,
+						Document,
+					])
+				)
+			);
+		},
+		queryKey: ['posts'],
+		onError: error => {
+			toast.error(error.message);
+			console.log(error);
+		},
+	});
 	return (
 		<MainLayout>
 			<section className="container mx-auto max-w-5xl flex flex-col px-5 py-5 lg:flex-row lg:gap-x-5 lg:items-start">
@@ -66,26 +102,28 @@ const ArticleDetail = () => {
 					<BreadCrumbs data={breadCrumbsData} />
 					<img
 						className="rounded-xl w-full"
-						src={images.Post1Image}
-						alt="laptop"
+						src={
+							data?.photo
+								? stables.UPLOAD_FOLDER_BASE_URL + data?.photo
+								: images.SamplePostImage
+						}
+						alt={data?.title}
 					/>
-					<Link
-						to="/blog?category=selectedCategory"
-						className="text-primary text-sm font-roboto inline-block mt-4 md:text-base"
-					>
-						EDUCATION
-					</Link>
-					<h1 className="text-xl font-medium font-roboto mt-4 text-dark-hard md:text-[26px]">
-						Help children get better education
-					</h1>
-					<div className="mt-4 text-dark-soft">
-						<p className="leading-7">
-							Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab, in at
-							ipsa ea voluptate placeat pariatur eaque soluta dolores doloribus?
-							Incidunt ad perspiciatis veritatis facilis vel? Error ipsa modi
-							voluptatum?
-						</p>
+					<div className="mt-4 flex gap-3">
+						{data?.categories?.map(category => (
+							<Link
+								key={category?.name}
+								to={`/blog?category=${category?.name}`}
+								className="text-primary text-sm font-roboto inline-block md:text-base"
+							>
+								{category?.name}
+							</Link>
+						))}
 					</div>
+					<h1 className="text-xl font-medium font-roboto mt-4 text-dark-hard md:text-[26px]">
+						{data?.title}
+					</h1>
+					<div className="mt-4 prose prose-sm sm:prose-base">{body}</div>
 					<CommentsContainer className="mt-10" loggedInUserId="a" />
 				</article>
 				<div>

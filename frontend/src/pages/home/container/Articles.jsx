@@ -19,7 +19,7 @@ const Articles = () => {
 			<div className=" flex flex-wrap md:gap-x-5 gap-y-5 pb-10">
 				{!isLoading &&
 					!isError &&
-					data.map(post => (
+					data?.map(post => (
 						<ArticleCard
 							key={post._id}
 							post={post}

@@ -14,3 +14,15 @@ export const getAllPosts = async () => {
 		}
 	}
 };
+export const getSinglePost = async ({ slug }) => {
+	try {
+		const { data } = await axios.get(`${domain}/api/posts/${slug}`);
+		return data;
+	} catch (error) {
+		if (error.response && error.response.data.message) {
+			throw new Error(error.response.data.message);
+		} else {
+			throw new Error(error.message);
+		}
+	}
+};
