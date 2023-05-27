@@ -8,7 +8,7 @@ import SocialShareButtons from '../../components/SocialShareButtons';
 import { useQuery } from '@tanstack/react-query';
 import { getSinglePost } from '../../services/index/post';
 import { toast } from 'react-hot-toast';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import parse from 'html-react-parser';
 
 import { generateHTML } from '@tiptap/html';
@@ -59,6 +59,11 @@ const ArticleDetail = () => {
 	const { slug } = useParams();
 	const [breadCrumbsData, setBreadCrumbsData] = useState([]);
 	const [body, setBody] = useState(null);
+
+	useEffect(() => {
+		console.log(body);
+	}, [body]);
+
 	const { data, isLoading, isError } = useQuery({
 		queryFn: () => getSinglePost({ slug }),
 		onSuccess: data => {
@@ -79,13 +84,7 @@ const ArticleDetail = () => {
 			]);
 			setBody(
 				parse(
-					generateHTML(data?.body?.content, [
-						Bold,
-						Italic,
-						Text,
-						Paragraph,
-						Document,
-					])
+					generateHTML(data?.body, [Bold, Italic, Text, Paragraph, Document])
 				)
 			);
 		},
