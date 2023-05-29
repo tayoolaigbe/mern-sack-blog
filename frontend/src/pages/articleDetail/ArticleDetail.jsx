@@ -19,6 +19,7 @@ import Paragraph from '@tiptap/extension-paragraph';
 import Text from '@tiptap/extension-text';
 import ArticleDetailSkeleton from './components/ArticleDetailSkeleton';
 import ErrorMessage from '../../components/ErrorMessage';
+import { useSelector } from 'react-redux';
 
 const postsdata = [
 	{
@@ -59,17 +60,13 @@ const tagsData = [
 
 const ArticleDetail = () => {
 	const { slug } = useParams();
+	const userState = useSelector(state => state.user);
 	const [breadCrumbsData, setBreadCrumbsData] = useState([]);
 	const [body, setBody] = useState(null);
-
-	useEffect(() => {
-		console.log(body);
-	}, [body]);
 
 	const { data, isLoading, isError } = useQuery({
 		queryFn: () => getSinglePost({ slug }),
 		onSuccess: data => {
-			console.log(data);
 			setBreadCrumbsData([
 				{
 					name: 'Home',
@@ -130,7 +127,11 @@ const ArticleDetail = () => {
 							{data?.title}
 						</h1>
 						<div className="mt-4 prose prose-sm sm:prose-base">{body}</div>
-						<CommentsContainer className="mt-10" loggedInUserId="a" />
+						<CommentsContainer
+							className="mt-10"
+							comments={data?.comments}
+							loggedInUserId={userState?.userInfo?._id}
+						/>
 					</article>
 					<div>
 						<SuggestedPost

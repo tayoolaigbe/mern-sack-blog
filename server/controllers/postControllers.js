@@ -119,6 +119,12 @@ export const getPost = async (req, res, next) => {
 						match: {
 							check: true,
 						},
+						populate: [
+							{
+								path: 'user',
+								select: ['avatar', 'name'],
+							},
+						],
 					},
 				],
 			},

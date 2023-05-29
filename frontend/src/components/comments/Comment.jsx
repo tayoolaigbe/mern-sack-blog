@@ -1,6 +1,6 @@
 import { FiMessageSquare, FiEdit2, FiTrash } from 'react-icons/fi';
 
-import { images } from '../../contants';
+import { images, stables } from '../../contants';
 import CommentForm from './CommentForm';
 
 const Comment = ({
@@ -30,7 +30,11 @@ const Comment = ({
 	return (
 		<div className="flex flex-nowrap items-start gap-x-3 bg-[#F2F4F5] p-3 rounded-lg">
 			<img
-				src={images.PostProfileImage}
+				src={
+					comment?.user?.avatar
+						? stables.UPLOAD_FOLDER_BASE_URL + comment.user.avatar
+						: images.SampleUserImage
+				}
 				alt="user profile"
 				className="w-9 h-9 object-cover rounded-full"
 			/>
